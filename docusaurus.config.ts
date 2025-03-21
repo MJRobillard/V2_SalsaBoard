@@ -52,7 +52,7 @@ const config: Config = {
           type: "doc",
           docId: "Overview",
           position: "left",
-          label: "Content",
+          label: "Board Member Info",
         },
         {
           to: "Mission",
