@@ -3,15 +3,14 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css"; // Ensure styles are included
 import React from "react";
-import { google_api_key } from "@site/keys";
 const localizer = momentLocalizer(moment);
 
-const GoogleCalendar = () => {
+const GoogleCalendar = () => { // broken
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     async function fetchEvents() {
-        const API_KEY = google_api_key;
+        const API_KEY = 'google_api_key';
         const CALENDAR_ID =
         "c_42b968062b45d29a7dec9766e52205a073c67bfca7888fbf69842663a87ede68@group.calendar.google.com";
 

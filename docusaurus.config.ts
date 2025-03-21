@@ -6,11 +6,11 @@ const config: Config = {
   title: "Salsa@Cal Board",
   favicon: "img/favicon.ico",
 
-  url: "https://fullstackdecal.com",
+  url: "https://salsaatcal.com",
   baseUrl: "/",
 
-  organizationName: "fullstack-decal", // Usually your GitHub org/user name.
-  projectName: "fullstackdecal", // Usually your repo name.
+  organizationName: "salsaatcal", // Usually your GitHub org/user name.
+  projectName: "salsaatcal board website", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
@@ -62,7 +62,7 @@ const config: Config = {
         {
           to: "Board",
           position: "left",
-          label: "Staff",
+          label: "Board",
         },
         {
           to: "recruitment",
@@ -70,7 +70,43 @@ const config: Config = {
           label: "Recruitment",
         },
         {
-          href: "https://github.com/fullstack-decal",
+          label: "Branches",
+          position: "left",
+          items: [
+            {
+              type: "doc",
+              docId: "Branches/Exec",
+              label: "Executive",
+            },
+            {
+              type: "doc",
+              docId: "Branches/External",
+              label: "External",
+            },
+            {
+              type: "doc",
+              docId: "Branches/Finance",
+              label: "Finance",
+            },
+            {
+              type: "doc",
+              docId: "Branches/Internal",
+              label: "Internal",
+            },
+            {
+              type: "doc",
+              docId: "Branches/Marketing",
+              label: "Marketing",
+            },
+            {
+              type: "doc",
+              docId: "Branches/Performance",
+              label: "Performance",
+            },
+          ],
+        },
+        {
+          href: "https://github.com/MJRobillard/V2_SalsaBoard/tree/main/",
           position: "right",
           className: "header-github-link",
           "aria-label": "GitHub repository",
@@ -85,7 +121,7 @@ const config: Config = {
           items: [
             {
               label: "Recordings",
-              to: "https://www.youtube.com/channel/UCGpukPda1pJ8Ei20e02oR0w",
+              to: "https://www.youtube.com/",
             },
           ],
         },
@@ -94,11 +130,11 @@ const config: Config = {
           items: [
             {
               label: "Facebook",
-              href: "https://www.facebook.com/webatberkeley/",
+              href: "https://www.facebook.com/",
             },
             {
               label: "Instagram",
-              href: "https://www.instagram.com/webatberkeley/",
+              href: "https://www.instagram.com/",
             },
           ],
         },
@@ -111,7 +147,7 @@ const config: Config = {
             },
             {
               label: "GitHub",
-              href: "https://github.com/full-stack-decal",
+              href: "https://github.com/MJRobillard",
             },
           ],
         },
