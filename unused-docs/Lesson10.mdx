@@ -1,0 +1,754 @@
+---
+sidebar_position: 12
+---
+
+
+# React 2: More Hooks, Axios, and Routing
+
+## Introduction
+
+Welcome to the second React lesson of the course! In this reading, we'll begin with a review of hooks and the `useState` hook which we covered in our last reading. We'll then dive into the `useEffect` hook. Together, `useState` and `useEffect` are extremely powerful, and are probably the only 2 hooks you'll need in this course.
+
+After looking at hooks, we'll delve into axios, a package in react which helps us connect our frontend to our backend. Through axios we can send data to the backend, and receive data from the backend, helping us create truly full-stack and powerful applications.
+
+Finally, we'll touch upon routing and how to easily add multiple pages to your websites in React.
+
+## useEffect
+
+Let's start with a quick review of hooks!
+
+### Hook review
+
+`useEffect` is a hook. Hooks in React manage the state of your application.
+Essentially, hooks are functions that let you “hook into” React state and
+lifecycle features from functional components. React provides a few built-in
+Hooks like `useState`. You can also create your own Hooks to reuse stateful
+behavior between different components. In the
+[React 1 Reading](/docs/Lessons/Lesson9), you learnt about the `useState` hook,
+which we used to initialize a variable, along with an updater function for that
+variable. Let's do a quick review of `useState` before moving on.
+
+### useState Review
+
+Let's recreate a counter example, just like we did in the
+[React 1 Reading](/docs/Lessons/Lesson9).
+
+This example renders a counter. When you click the button, it increments the
+value of `count`.
+
+```jsx
+import React, { useState } from 'react';
+
+const Counter = () => {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+};
+```
+
+Here, `useState` is a Hook. We call it inside of a functional component in React
+to manage the state of our application. `useState` returns a pair: the current
+state value and a function that lets you update it. You can call this function
+from anywhere to update the current state value. In our example above, we
+initialized `count` to have a starting state value of `0` and `setCount` to a
+function which updates our `count` variable. The only argument to `useState` is
+the initial state. In the example above, it is 0 because our counter starts from
+zero.
+
+#### What Do Square Brackets Mean?
+
+You might have noticed the square brackets when we declare a state variable:
+
+```javascript
+const [count, setCount] = useState(0);
+```
+
+The names on the left aren’t a part of the React API. You can name your own
+state variables:
+
+```javascript
+const [fruit, setFruit] = useState('banana');
+```
+
+This JavaScript syntax is called “array destructuring”. It means that we’re
+making two new variables `fruit` and `setFruit`, where `fruit` is set to the
+first value returned by `useState`, and `setFruit` is the second. It is
+equivalent to this code:
+
+```javascript
+var fruitStateVariable = useState('banana'); // Returns a pair
+var fruit = fruitStateVariable[0]; // First item in a pair
+var setFruit = fruitStateVariable[1]; // Second item in a pair
+```
+
+When we declare a state variable with `useState`, it returns a pair — an array
+with two items. The first item is the current value, and the second is a
+function that lets us update it. Using `[0]` and `[1]` to access them is a bit
+confusing because they have a specific meaning. This is why we use array
+destructuring instead.
+
+##### Declaring Multiple State Variables
+
+Declaring state variables as a pair of `[something, setSomething]` is also handy
+because it lets us give different names to different state variables if we want
+to use more than one:
+
+```jsx
+const ExampleWithManyStates = () => {
+  // Declare multiple state variables!
+  const [age, setAge] = useState(42);
+  const [fruit, setFruit] = useState('banana');
+  const [todos, setTodos] = useState([{ text: 'Learn Hooks' }]);
+  // ...
+};
+```
+
+In the above component, we have `age`, `fruit`, and `todos` as local variables,
+and we can update them individually:
+
+```jsx
+function handleOrangeClick() {
+  setFruit('orange');
+}
+```
+
+You **don’t have to** use many state variables. State variables can hold objects
+and arrays just fine, so you can still group related data together.
+
+### Using useEffect
+
+#### Importing useEffect
+
+Similar to `useState` and any other hook we might want to use, we import
+`useEffect` like so.
+
+```javascript
+import React, { useState, useEffect } from 'react';
+```
+
+If we just wanted to import `useEffect` and not `useState`, we would do the
+following:
+
+```javascript
+import React, { useEffect } from 'react';
+```
+
+#### Counter Example
+
+The `useEffect` hook lets you perform side effects in function components:
+
+```jsx {1,6-10}
+import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+}
+```
+
+This code snippet is based on on our previous counter example, but we added a
+new feature to it: we set the document title to a custom message including the
+number of clicks.
+
+Data fetching, setting up a subscription, and manually changing the DOM in React
+components are all examples of side effects.
+
+Sometimes, we want to **run some additional code after React has updated the
+DOM.** Network requests, manual DOM mutations, and logging are some common
+examples of effects.
+
+#### Details
+
+**What does `useEffect` do?** By using this Hook, you tell React that your
+component needs to do something after render. React will remember the function
+you passed (we'll refer to it as our "effect"), and call it later after
+performing the DOM updates. In this effect, we set the document title, but we
+could also perform data fetching or call some other imperative API.
+
+**Why is `useEffect` called inside a component?** Placing `useEffect` inside the
+component lets us access the `count` state variable (or any props) right from
+the effect. We don't need a special API to read it -- it's already in the
+function scope.
+
+**Does `useEffect` run after every render?** Yes! By default, it runs both after
+the first render _and_ after every update. (We will later talk about how to
+customize this). Instead of thinking in terms of "mounting" and "updating", you
+might find it easier to think that effects happen "after render". React
+guarantees the DOM has been updated by the time it runs the effects.
+
+Now that we know more about effects, these lines should make sense:
+
+```jsx
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+}
+```
+
+We declare the `count` state variable, and then we tell React we need to use an
+effect. We pass a function to the `useEffect` Hook. This function we pass _is_
+our effect. Inside our effect, we set the document title using the
+`document.title` browser API. We can read the latest `count` inside the effect
+because it's in the scope of our function. When React renders our component, it
+will remember the effect we used, and then run our effect after updating the
+DOM. This happens for every render, including the first one.
+
+### General Usage
+
+Now that we've learnt the basics of hooks and `useEffect`, lets take another
+look at how to use `useEffect` in a more general setting. The general format of
+a`useEffect` hook is as follows.
+
+```jsx
+useEffect(() => {
+  // put your code here
+}, dependencies);
+```
+
+Essentially, `useEffect` is a function that takes in two arguements. The first
+arguement is a function with what you want your `useEffect` hook to do. This
+function takes in no arguements, hence the empty brackets at the beginning of
+our passed in arrow function. The second arguement, which is optional, is an
+array of dependencies. For example, let's say that inside of our `useEffect`
+hook, we want to update our `score` variable, but only if the `referee` variable
+has changed. It would look something like this:
+
+```jsx
+useEffect(() => {
+  setScore(someNewScore);
+}, [referee]);
+```
+
+Thus we only `setScore` to our new score value if the `referee` variable
+changes. If we wanted to set it so that we only updated the score based on
+either the `referee` variable or the `inning` variable changing, we could do
+something like this.
+
+```jsx
+useEffect(() => {
+  setScore(someNewScore);
+}, [referee, inning]);
+```
+
+#### Running useEffect on First render
+
+If the `useEffect` hook seemed confusing to you, that's totally fine! Just make
+sure to **pay attention here**.
+
+If you want to update something in your app, or have something happen right at
+page load, you can put it into the useEffect function, and **pass in an empty
+array into it's list of dependencies**. For example, say I wanted to print
+"Hello World" to the console right at page load. I would do the following.
+
+```jsx
+useEffect(() => {
+  console.log('Hello World');
+}, []);
+```
+
+Notice the empty array that was passed into the second arguement of our
+`useEffect`. This ensures that whatever's in our `useEffect` function only runs
+on page load. This will come up more often than not when you're building and
+testing any future projects.
+
+## Axios
+
+**Axios** **is how we connect the frontend to the backend.** In technical speak,
+Axios is a promise-based HTTP client for the browser and Node.js. Informally,
+Axios is a way to make API calls to the backend (GET requests, POST requests,
+etc...) and how we send data to and receive data from the backend.
+
+:::note
+
+Axios is how we connect the frontend to the backend. Other libraries, like the
+native fetch() JS API and jQuery's AJAX, can also be used for web service
+requests, but Axios is the preferred library for this course.
+
+:::
+
+Once again: Axios is how we connect the frontend to the backend. Please remember
+this point, for it will be important when trying to create almost any functional
+web project.
+
+:::note
+
+In class-based components, we would tie our API calls to lifecycle methods to be
+invoked at a particular point in a component's lifecycle. As you know, the
+functional equivalent of lifecycle methods are React Hooks, so we can simulate
+the same process by tying our calls to the useEffect() hook.
+
+:::
+
+#### Documentation
+
+[Axios](https://axios-http.com/)
+
+[GitHub - axios/axios: Promise based HTTP client for the browser and node.js](https://github.com/axios/axios)
+
+#### Installation
+
+```bash
+yarn add axios
+```
+
+### Using Axios
+
+Don't forget to replace your username in the place of `{#your github name}`.
+
+```jsx
+import axios from "axios";
+...
+axios.get('https://api.github.com/users/{#your github name}')
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+```
+
+Let's dissect this piece of code into two parts: the API call, and everything
+else.
+
+```jsx
+axios.get("https://api.github.com/users/{#your github name}");
+```
+
+This piece of code is where the magic happens. Here we use axios to make a GET
+request to `https://api.github.com/users/{#your github name}`.
+
+If you're unfamiliar with what GET and POST requests are:
+
+1. **`[GET](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET)`:**
+   The `GET` method requests a representation of the specified resource.
+   Requests using `GET` should only retrieve data.
+2. **`[POST](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)`:**
+   The `POST` method is used to submit an entity (a form) to the specified
+   resource, often causing a change in state or side effects on the server.
+3. **`[PUT](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT)`:**
+   The `PUT` method replaces all current representations of the target resource
+   with the request payload. In other words, you can use `PUT` to update a
+   resource.
+4. **`[DELETE](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE)`:**
+   The `DELETE` method deletes the specified resource.
+5. **`[PATCH](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH)`:**
+   The `PATCH` method is used to apply partial modifications to a resource.
+
+You should be familiar with the most commonly used ones, which are `GET`,
+`POST`, `PUT`, and `DELETE` requests.
+
+This GET request returns a promise, which is why we follow up the above line of
+code with
+
+```jsx
+.then(function (response) {
+   console.log(response);
+ })
+ .catch(function (error) {
+   console.log(error);
+ })
+```
+
+This piece of code, however, isn't specific to axios, and we can choose to deal
+with the promise returned by our axios method any way we want.
+
+### Using Axios Inside React
+
+```jsx
+import React, {useState} from 'react';
+
+import axios from 'axios';
+
+//Functional component
+
+const App = () => {
+	const [person, setPerson] = useState("");
+
+	useEffect( () => {
+			axios.get(`https://api.github.com/users/{#your github name}`)
+				.then( res => {
+					const fetchedPerson = res.name;
+					setPerson(fetchedPerson);
+				})
+		}, []);
+
+	return (
+		<h1>{person}</h1>
+	);
+}
+
+export default App
+```
+
+## Package Managers (Optional)
+
+### What is NPM?
+
+`npm` informally stands for **node package manager**. `npm` is a package manager
+for JavaScript and is the default package manager for Node.
+
+It consists of a command-line client, also called npm, and an online database of
+public and paid-for private packages called the npm registry.
+
+[npm](https://www.npmjs.com/)
+
+In order to install a package to use in your react project using npm, you run
+`npm install <name of package>` in the root directory of your react app. This
+adds the package as a dependency in `package.json`.
+
+It is important to note that the `package.json` is just a list of tools you are
+using. It doesn't do anything except to list them. The real magic happens in the
+`node_modules` folder, where the packages are stored for you.
+
+### What is Yarn?
+
+Yarn is a package manager released by Facebook in 2016 and is a common
+alternative to NPM.
+
+[Home](https://yarnpkg.com/)
+
+To install a package using yarn, run `yarn add <name of package>` in the root
+directory. \*\*
+
+### NPM vs Yarn
+
+And now, to have an age-old discussion — which one should you use?
+
+**In practice, there is no real difference between the effects of using `NPM`
+and `yarn`**, as both package managers work perfectly fine.
+
+Back in the day, npm used to be super buggy, so yarn was created as a solution
+to NPM's deficiencies. These days the people behind npm were able to fix the
+main complaints people had against NPM, but many people and companies still
+prefer yarn as a byproduct of that era. There are definitely still advantages to
+using yarn, such as:
+
+- Installing packages using yarn tends to be faster than installing packages
+  with npm
+- There are some slight security advantages to using yarn
+
+but there are no other drastic differences between the two package managers. I
+personally use yarn and recommend yarn to others starting projects, but the
+choice is entirely up to you. **Make sure you don't use both,** however, because
+that can cause some problems on the backend when attempting to host your app.
+
+If you are using npm, you should see a `package-lock.json` in your app. If you
+are using yarn, you should see a `yarn.lock` in your app.
+
+## React Router
+
+We've learned about state, hooks, and components, and now we can build a nice
+single-page web app (commonly referred to as a SPA).
+
+But now what? Most websites have multiple pages and some even have dynamic
+routes, routes that use data to determine what's shown to the user.
+
+Think about youtube. The homepage showing you all the suggestions of videos you
+might want to see is `youtube.com`. At the same time, however, each video must
+have its own route. Instead of having some poor intern create a route for each
+video on youtube manually, we can use dynamic routing to display countless
+similar pages by using a variable in the URL that's determined by the video or
+piece of content that was clicked on. We can then go to that page and pull the
+variable from the URL to determine which piece of content to display.
+
+To be doing all this, we'll be using React Router. React Router is by far the
+most popular client-side router in the React community. It is mature, being used
+by big companies, and battle-tested at large scales. It also has a lot of really
+cool capabilities, some of which we'll examine here.
+
+:::info More on Routing
+
+If you want to learn more about client-side routing and its alternative,
+server-side routing, check out
+[this resource](https://medium.com/@wilbo/server-side-vs-client-side-routing-71d710e9227f).
+
+:::
+
+#### Documentation
+
+React router documentation can be found
+[here](https://v5.reactrouter.com/web/guides/quick-start).
+
+#### Installation
+
+```shell
+yarn add react-router-dom
+```
+
+### Why use Routers?
+
+Why use a React Router at all? Didn't the `<a>` work? It did but with a flaw:
+every link you clicked would end up in the browser navigating to a whole new
+page which means React would totally reload your entire app all over again. With
+Routers, and its special features, it can intercept this and just handle that
+all client-side. Much faster and a better user experience. The base URL and page
+never actually change.
+
+React Router is, at the end of the day, a conditional rendering wrapper that
+only shows you the component associated with the link you've selected or are on.
+
+### Basic Routing
+
+Let's implement a basic example of routing.
+
+:::info Introducing a New Tag Introducing a new tag: `<nav>` ! It is intended to
+wrap major navigation blocks on your webpage. Here's more information about it.
+:::
+
+```jsx
+import React from 'react';
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <div>
+        {/* The HTML */}
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/users">Users</Link>
+            </li>
+          </ul>
+        </nav>
+
+        {/* The React Router that makes the HTML above work */}
+        <Switch>
+          <Route path="/about">
+            <About />
+          </Route>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </BrowserRouter>
+  );
+};
+
+const Home = () => <h2>Home</h2>;
+const About = () => <h2>About</h2>;
+const Users = () => <h2>Users</h2>;
+
+export default App;
+```
+
+### Dynamic Routing
+
+What if we have too many routes to write down manually? For example, what if we
+want a route for every listing on Airbnb? Here's where dynamic routing comes
+into play.
+
+We can set our routes to use a variable by simply putting a colon in front of
+the term we want to use as a variable in our route. See the example below where
+we use `:id` in our route, creating a variable `id` that is then later accessed.
+
+```jsx
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useParams,
+} from 'react-router-dom';
+
+function DynamicRouting() {
+  const data = [
+    { name: 'Netflix', route: 'netflix' },
+    { name: 'Zillow', route: 'zillow' },
+    { name: 'Yahoo', route: 'yahoo' },
+    { name: 'Instagram', route: 'instagram' },
+  ];
+
+  return (
+    <Router>
+      <div>
+        <h2>Accounts</h2>
+
+        <div>
+          {data.map((item) => (
+            <Link to={`/${item.route}`}>
+              <div>
+                <h3>{item.name}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <Switch>
+          <Route path="/:id" children={<Child />} />
+        </Switch>
+      </div>
+    </Router>
+  );
+}
+
+function Child() {
+  let { id } = useParams();
+
+  return (
+    <div>
+      <h3>{id}</h3>
+    </div>
+  );
+}
+
+export default DynamicRouting;
+```
+
+As you can see, we use `/:id` as a variable route, or a dynamic route rather
+than a static route. There is no path `/id` (unless we want there to be),
+rather, the `id` variable is a URL parameter, or param. We specifically the
+children of the `/:id` route in our `<Route>` tag, and this component is what
+will be rendered to the user. As we can see above, the `Child` component changes
+what it displays depending on the route that it is displayed from. We can grab
+the `id` param from the URL by using the `useParams` hook as shown in the
+example, then proceed to use it as a variable in our component.
+
+To add an example, say you were looking at a list of cards in airbnb, each with
+basic listing info on them. When you want to learn more about a listing, you
+clock on that card, which then takes you to another page with more complete info
+about that listing. Relating that action to dynamic routing, each listing has a
+unique id. The browser takes you to a URL with that id when you click on a card.
+In this way Airbnb implements dynamic routing, setting the URL to the id of the
+listing you chose. Next, the router realizes that it has a dynamic route
+(`/listing/12345` might match to `/listing/:id` for example) and renders that
+route's assigned component, which we'll call `Listing`. `Listing` then uses
+hooks such as `useParam` to determine the id of the requested listing, then
+queries Airbnb's database to get the info for that listing before displaying it
+to the user.
+
+### Complex Routing — A Practical Example (Optional)
+
+I've included an example from the [Salsa](https://none/) website
+below.
+
+```jsx
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+import Navbar from './components/navbar';
+import Footer from './components/footer';
+
+import Landing from './pages/landing';
+import About from './pages/about';
+import Initiatives from './pages/initiatives';
+import Error from './pages/error';
+
+import './App.scss';
+
+function App() {
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Navbar landing />
+        </Route>
+        <Route path="*">
+          <Navbar />
+        </Route>
+      </Switch>
+
+      <Switch>
+        {/* About Us */}
+        <Route path="/about">
+          <About />
+        </Route>
+
+        {/* Initiatives */}
+        <Route path="/initiatives">
+          <Initiatives />
+        </Route>
+
+        {/* Landing Page */}
+        <Route exact path="/">
+          <Landing />
+        </Route>
+
+        {/* 404 no page found */}
+        <Route path="*">
+          <Error />
+        </Route>
+      </Switch>
+
+      <Footer />
+    </Router>
+  );
+}
+
+export default App;
+```
+
+Let's take a closer look at the following snippet from the above
+
+```jsx
+<Switch>
+  <Route exact path="/">
+    <Navbar landing />
+  </Route>
+  <Route path="*">
+    <Navbar />
+  </Route>
+</Switch>
+```
+
+The `exact` prop tells our router to only show the landing version of the navbar
+when there are no extensions to the URL, which makes sense since we want our
+landing page to be the default page. Using `*` as the path for our regular
+navbar tells the router that for all other pages, render the regular navbar.
+
+:::info
+
+Using a single variable as a prop (such as `exact` or `landing` above) is
+equivalent to setting `exact={true}` or `landing={true}` as a prop. Thus we just
+use `exact` or `landing` instead of the whole statement as shorthand.
+
+:::
+
+## Conclusion
+
+This lesson is all about helping you realize that the React universe is massive,
+collaborative, and full of tools that make writing React faster and easier.
+There are many more tools to the React ecosystem that we were unable to touch on
+today and that you may not need at any point in the course, but keep in mind
+that if you're trying to solve a general problem or create something specific,
+there's probably an npm package for that.
+
+---
+
+**Contributors**
+
+- [Samarth Goel](https://www.linkedin.com/in/samarth-goel-1047b8187/)
+- [Caelin Sutch](https://www.linkedin.com/in/caelinsutch)
+- [Arushi Somani](https://www.linkedin.com/in/arushisomani/)
+- [Nitya Krishnakumar](https://www.linkedin.com/in/nitya-krish/)
+- [Natalia Vetter-Neo](https://www.linkedin.com/in/nataliavetter/)
