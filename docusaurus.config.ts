@@ -65,6 +65,11 @@ const config: Config = {
           label: "Board",
         },
         {
+          to: "Moves",
+          position: "left",
+          label: "Moves",
+        },
+        {
           to: "recruitment",
           position: "left",
           label: "Recruitment",

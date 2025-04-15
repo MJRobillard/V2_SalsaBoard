@@ -18,7 +18,6 @@
 import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import WeekCard from "../components/WeekCard";
-import schedule from "../data/schedule";
 import { Image, Container, Box, Text, Link } from "@chakra-ui/react";
 import fullStackLogoPath from "@site/static/img/logo.jpg";
 import { useColorMode } from "@docusaurus/theme-common";
@@ -83,8 +82,8 @@ const Home: React.FC = () => {
   return (
     <Layout
       title={siteConfig.title}
-      description="Description will go into a meta tag in <head />"
-      wrapperClassName="fullStackHero"
+      description="Salsa@Cal website in development"
+      wrapperClassName="Salsa@Cal"
     >
       <HomeContent />
     </Layout>
